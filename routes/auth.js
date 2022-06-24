@@ -8,6 +8,8 @@ const bcrypt = require('bcryptjs');
 var jwt = require('jsonwebtoken');
 const JWT_Secret = 'thsi@isavrey$sceret';
 
+var fetchuser = require('../middleware/fetchuser');
+
 const router = express.Router();
 
 router.post('/createUser',[
@@ -57,6 +59,7 @@ router.post('/createUser',[
         }
     });
 
+    // function for login user
     router.post('/login',[
         body('email', 'Enter a valid email').isEmail(),
         body('password', 'password can\'t be empty').exists()
@@ -88,6 +91,21 @@ router.post('/createUser',[
 
                 const authToken = jwt.sign(data, JWT_Secret)
                 res.json({authToken});
+
+            } catch (error) {
+                res.status(500).send("Internal server error");
+            }
+        }
+    );
+
+
+    // get user
+    router.post('/user',fetchuser,
+        async (req, res) => {
+            try {
+                let user_id = req.user.id;
+                const user = await User.findById(user_id).select("-password");
+                res.send(user);
 
             } catch (error) {
                 res.status(500).send("Internal server error");

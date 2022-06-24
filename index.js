@@ -9,6 +9,7 @@ const port = 5000
 app.use(express.json());
 
 app.use('/api/auth', require('./routes/auth.js'));
+app.use('/api/note', require('./routes/note.js'));
 
 // app.get('/', (req, res) => {
 //   res.send('Hello World! this is test.')

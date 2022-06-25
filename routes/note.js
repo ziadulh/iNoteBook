@@ -39,4 +39,46 @@ async (req, res) => {
     
 });
 
+router.put('/updateNote/:id',fetchuser, async (request, response) => {
+    const {name, description, tag} = request.body;
+    const newNote = {};
+    try{
+        if(name){newNote.name = name};
+        if(description){newNote.description = description};
+        if(tag){newNote.tag = tag};
+
+        let note = await Note.findById(request.params.id);
+        if(!note){return response.status(404).send("Not Found")}
+
+        if(note.user.toString() !== request.user.id){
+            return response.status(401).send("Not allowed");
+        }
+
+        note = await Note.findByIdAndUpdate(request.params.id, {$set: newNote},{new: true});
+        response.json(note);
+    }catch(error){
+        response.status(500).send("Internal server error!");
+    }
+    
+});
+
+router.delete('/deleteNote/:id',fetchuser, async (request, response) => {
+
+    try {
+        let note = await Note.findById(request.params.id);
+        if(!note){return response.status(404).send("Not Found");}
+
+        if(note.user.toString() !== request.user.id){
+            return response.status(401).send("Not allowed");
+        }
+
+        note = await Note.findByIdAndDelete(request.params.id);
+        response.json({"Success": "Note has been deleted"});
+    } catch (error) {
+        console.log(error.message);
+        response.status(500).send("Some error occured");
+    }
+
+});
+
 module.exports = router;

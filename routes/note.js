@@ -76,7 +76,7 @@ router.delete('/deleteNote/:id',fetchuser, async (request, response) => {
         response.json({"Success": "Note has been deleted"});
     } catch (error) {
         console.log(error.message);
-        response.status(500).send("Some error occured");
+        return response.status(500).send("Some error occured");
     }
 
 });
